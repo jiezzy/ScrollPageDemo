@@ -195,26 +195,37 @@ public class MyHorScorllView extends HorizontalScrollView {
 	 * 回缩动画
 	 */
 	public void animation() {
+		if (state == State.LEFT) {
+			curIndex++;
+		}else{
+			curIndex--;
+		}
+		mainMenu();
+		image1bg();
+		if(curIndex>3)
+			curIndex=3;
+		if(curIndex<0)
+			curIndex=0;
+
+		normal.setEmpty();
+
+		/** 动画执行 **/
+		if (current_Left > initLeft + 50 && turnListener != null)
+			turnListener.onTurn();
+	}
+	
+	private void mainMenu(){
 		int from = 0, to = 0;
 		DisplayMetrics dm = new DisplayMetrics();
 		activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
 		if (state == State.LEFT) {
-			curIndex++;
-
 			if (curIndex > 3) {
-				curIndex = 3;
-				from = normal.left - dm.widthPixels * 3 + mleft;
+				from = normal.left - (dm.widthPixels * 3 - mleft);
 				to = normal.left - dm.widthPixels * 3;
 			} else {
-				from = normal.left - (dm.widthPixels * (curIndex - 1)) + mleft;
+				from = normal.left - ((dm.widthPixels * (curIndex - 1)) + mleft);
 				to = normal.left - dm.widthPixels * curIndex;
 			}
-
-			TranslateAnimation image_Anim = new TranslateAnimation(from, to, 0,
-					0);
-			image_Anim.setDuration(300);
-			image_Anim.setFillAfter(true);
-			imageView.startAnimation(image_Anim);
 
 			// 开启移动动画
 			TranslateAnimation inner_Anim = new TranslateAnimation(from, to, 0, 0);
@@ -222,21 +233,13 @@ public class MyHorScorllView extends HorizontalScrollView {
 			inner_Anim.setFillAfter(true);
 			inner.startAnimation(inner_Anim);
 		} else {
-			curIndex--;
 			if (curIndex < 0) {
-				curIndex = 0;
 				from = normal.left + mleft;
 				to = 0;
 			} else {
 				from = normal.left - (dm.widthPixels * (curIndex + 1)) + mleft;
 				to = -dm.widthPixels * curIndex;
 			}
-			
-			TranslateAnimation image_Anim = new TranslateAnimation(from, to, 0,
-					0);
-			image_Anim.setDuration(300);
-			image_Anim.setFillAfter(true);
-			imageView.startAnimation(image_Anim);
 			
 			// 开启移动动画
 			TranslateAnimation inner_Anim = new TranslateAnimation(from, to, 0,
@@ -246,21 +249,42 @@ public class MyHorScorllView extends HorizontalScrollView {
 			inner.startAnimation(inner_Anim);
 		}
 		inner.layout(normal.left, normal.top, normal.right, normal.bottom);
+	}
+	
+	private void image1bg(){
+		int from = 0, to = 0;
+		DisplayMetrics dm = new DisplayMetrics();
+		activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+		if (state == State.LEFT) {
+			if (curIndex > 3) {
+				from = initLeft - (dm.widthPixels * 3 - mleft)/2;
+				to = initLeft - dm.widthPixels * 3/2;
+			} else {
+				from = initLeft - ((dm.widthPixels * (curIndex - 1)) + mleft)/2;
+				to = initLeft - dm.widthPixels * curIndex/2;
+			}
 
-		/** line_up **/
-		// TranslateAnimation line_up_Anim = new TranslateAnimation(
-		// Math.abs(line_up_top - lineUp_current_Top), 0,0, 0);
-		// line_up_Anim.setDuration(200);
-		// line_up.startAnimation(line_up_Anim);
-		// line_up.layout(line_up.getLeft(), line_up_top, line_up.getRight(),
-		// line_up_bottom);
-
-		normal.setEmpty();
-
-		/** 动画执行 **/
-		if (current_Left > initLeft + 50 && turnListener != null)
-			turnListener.onTurn();
-
+			TranslateAnimation image_Anim = new TranslateAnimation(from, to, 0,
+					0);
+			image_Anim.setDuration(300);
+			image_Anim.setFillAfter(true);
+			imageView.startAnimation(image_Anim);
+		} else {
+			if (curIndex < 0) {
+				from = initLeft + mleft/2;
+				to = 0;
+			} else {
+				from = initLeft - ((dm.widthPixels * (curIndex + 1)) + mleft)/2;
+				to = -dm.widthPixels * curIndex/2;
+			}
+			
+			TranslateAnimation image_Anim = new TranslateAnimation(from, to, 0,
+					0);
+			image_Anim.setDuration(300);
+			image_Anim.setFillAfter(true);
+			imageView.startAnimation(image_Anim);
+		}
+		imageView.layout(initLeft, imageView.getTop(), initRight, imageView.getBottom());
 	}
 
 	/** 是否需要开启动画 **/
